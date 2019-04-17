@@ -11,6 +11,8 @@ public class NettyTestApplicationTests {
 
 	@Test
 	public void contextLoads() {
+
+
 	}
 
 }

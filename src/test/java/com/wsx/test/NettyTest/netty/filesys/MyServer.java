@@ -96,6 +96,8 @@ public class MyServer {
                                     HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
                                     HttpHeaderUtil.setContentLength(response, fileLength);
                                     MimetypesFileTypeMap mimetypesFileTypeMap = new MimetypesFileTypeMap();
+                                    System.out.println(mimetypesFileTypeMap.getContentType(file.getPath()));
+                                    //"application/octet-stream"
                                     response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimetypesFileTypeMap.getContentType(file.getPath()));
 
 
