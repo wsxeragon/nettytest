@@ -1,4 +1,4 @@
-package com.wsx.test.NettyTest.test_marshalling;
+package com.wsx.test.NettyTest.netty.test_marshalling;
 
 import java.io.Serializable;
 

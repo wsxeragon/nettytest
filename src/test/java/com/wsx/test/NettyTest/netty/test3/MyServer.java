@@ -31,7 +31,7 @@ public class MyServer {
                             String str = msg.content().toString(CharsetUtil.UTF_8);
                             System.out.println(str);
                             byte[] bytes1 = "呵呵呵呵呵呵呵呵".getBytes("utf-8");
-                           ByteBuf byteBuf = Unpooled.copiedBuffer(bytes1);
+                            ByteBuf byteBuf = Unpooled.copiedBuffer(bytes1);
                             ctx.writeAndFlush(new DatagramPacket(byteBuf, msg.sender()));
 
                         }

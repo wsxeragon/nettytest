@@ -1,19 +1,10 @@
-package com.wsx.test.NettyTest.test_marshalling;
+package com.wsx.test.NettyTest.netty.test_marshalling;
 
-import com.wsx.test.NettyTest.netty.test_messagepack.MyInfo;
-import com.wsx.test.NettyTest.netty.test_proto.PersonOuterClass;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32FrameDecoder;
-import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class MyServer {
 

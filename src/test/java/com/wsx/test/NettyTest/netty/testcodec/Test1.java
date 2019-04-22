@@ -1,12 +1,19 @@
 package com.wsx.test.NettyTest.netty.testcodec;
 
+import com.wsx.test.NettyTest.netty.private_protocol.Header;
+import com.wsx.test.NettyTest.netty.private_protocol.NettyMessage;
 import com.wsx.test.NettyTest.netty.test_proto.PersonOuterClass;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.junit.Test;
 import org.msgpack.MessagePack;
 import org.msgpack.template.Templates;
 
+import javax.print.DocFlavor;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Test1 {
 
@@ -44,6 +51,30 @@ public class Test1 {
 
        List<String> list1 = messagePack.read(bs, Templates.tList(Templates.TString));
        System.out.println(list1);
+
+    }
+
+    @Test
+    public void test1w2() throws  Exception{
+        ByteBuf buf = Unpooled.buffer();
+
+        buf.writeByte(1);
+        buf.writeInt(22);
+        buf.writeLong(3333L);
+        byte[] bs1 = "haha".getBytes("UTF-8");
+        buf.writeInt(bs1.length);
+        buf.writeBytes(bs1);
+
+
+        System.out.println(buf.readByte());
+        System.out.println(buf.readInt());
+        System.out.println(buf.readLong());
+        byte[] bs = new byte[buf.readInt()];
+        buf.readBytes(bs);
+        System.out.println(new String(bs,"UTF-8"));
+
+
+
 
     }
 }
