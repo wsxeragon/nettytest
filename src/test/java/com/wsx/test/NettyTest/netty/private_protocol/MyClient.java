@@ -29,7 +29,14 @@ public class MyClient {
 
     private static ScheduledExecutorService executor1 = Executors
             .newScheduledThreadPool(1);
+
+    private static volatile int count = 0;
+
     private static String TOKEN =null;
+
+    private static Bootstrap bootstrap=null;
+
+    private static long sleepTime=1000;
 
     public static void main(String[] args){
         connect("127.0.0.1",8080);
@@ -38,9 +45,9 @@ public class MyClient {
 
     private static void connect(String ip,int port){
         EventLoopGroup group = new NioEventLoopGroup();
-
+        ScheduledFuture taskFuture = null;
         try {
-            Bootstrap bootstrap = new Bootstrap();
+            bootstrap = new Bootstrap();
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.TCP_NODELAY,true)
@@ -49,15 +56,15 @@ public class MyClient {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             socketChannel.pipeline().addLast(new NettyMessageDecoder());
                             socketChannel.pipeline().addLast(new NettyMessageEncoder());
-                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(50000));
-                            socketChannel.pipeline().addLast( new LoginAuthReqHandler());
+                            socketChannel.pipeline().addLast(new ReadTimeoutHandler(5000));
+                            socketChannel.pipeline().addLast(new LoginAuthReqHandler());
                             socketChannel.pipeline().addLast(new HeartBeatReqHandler());
                             socketChannel.pipeline().addLast(new MyReqHandler());
-
                         }
                     });
             ChannelFuture future = bootstrap.connect(ip,port).sync();
-            executor1.scheduleAtFixedRate(new Business(future.channel()),2000,5000,TimeUnit.MILLISECONDS);
+            sleepTime = 1000;
+            taskFuture =  executor1.scheduleAtFixedRate(new Business(future.channel()),2000,5000,TimeUnit.MILLISECONDS);
             future.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -65,18 +72,22 @@ public class MyClient {
             // 首先监听网络断连事件，如果Channel关闭，则执行后续的重连任务，通过Bootstrap重新发起连接
             // 客户端挂在cIoseFuture上监听链路关闭信号，一旦关闭，则创建重连定时器，5s之后重新发起连接，直到重连成功。
             //服务端感知到断连事件之后，需要清空缓存的登录认证注册信息，以保证后续客户端能够正常重连。
+            if(taskFuture != null){
+                taskFuture.cancel(true);
+                taskFuture=null;
+            }
             executor.execute(new Runnable() {
                 @Override
                 public void run() {
-                    try {
-                        TimeUnit.SECONDS.sleep(5);
+                    while(sleepTime<60*60*1000){
                         try {
-                            connect(ip, port);// 递归调用，发起重连操作
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                            sleepTime = (long)(sleepTime*1.5);
+                            System.out.println("睡眠："+sleepTime);
+                            Thread.sleep(sleepTime);
+                            System.out.println("重连");
+                            connect(ip, port);
+                        } catch (InterruptedException e) {
                         }
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
                     }
                 }
             });
@@ -85,8 +96,9 @@ public class MyClient {
 
 
         }
-    }
 
+
+    }
 
 
     private static class MyReqHandler extends   ChannelHandlerAdapter{
@@ -103,14 +115,17 @@ public class MyClient {
 
     private static class HeartBeatReqHandler extends   ChannelHandlerAdapter{
 
+        private ScheduledFuture heartbeat;
         @Override
         public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
             NettyMessage message = (NettyMessage) msg;
             //认证完后定时发送心跳
             if (message.getHeader() != null && message.getHeader().getType() == MessageType.LOGIN_RESP) {
-                ctx.executor().scheduleAtFixedRate(new HeartBeat(ctx,TOKEN), 0, 5000, TimeUnit.MILLISECONDS);
+                heartbeat=ctx.executor().scheduleAtFixedRate(new HeartBeat(ctx,TOKEN), 0, 5000, TimeUnit.MILLISECONDS);
+                count = 0;
             } else if (message.getHeader() != null && message.getHeader().getType() == MessageType.HEARTBEAT_RESP) {
                 System.out.println("收到心跳回复");
+                count = 0;
             }else {
                 ctx.fireChannelRead(msg);
             }
@@ -126,7 +141,10 @@ public class MyClient {
         public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
             System.out.println("异常-------------" + cause);
             cause.printStackTrace();
-            ctx.close();
+            if(heartbeat != null){
+                heartbeat.cancel(true);
+                heartbeat=null;
+            }
             ctx.fireExceptionCaught(cause);
         }
 
@@ -151,6 +169,7 @@ public class MyClient {
                 message.setHeader(header);
                 System.out.println("客户端发送心跳...");
                 ctx.writeAndFlush(message);
+                count++;
             }
 
         }

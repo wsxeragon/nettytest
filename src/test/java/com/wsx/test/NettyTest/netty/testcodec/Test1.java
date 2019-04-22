@@ -1,6 +1,7 @@
 package com.wsx.test.NettyTest.netty.testcodec;
 
 import com.wsx.test.NettyTest.netty.private_protocol.Header;
+import com.wsx.test.NettyTest.netty.private_protocol.MyClient;
 import com.wsx.test.NettyTest.netty.private_protocol.NettyMessage;
 import com.wsx.test.NettyTest.netty.test_proto.PersonOuterClass;
 import io.netty.buffer.ByteBuf;
@@ -14,6 +15,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class Test1 {
 
@@ -73,8 +77,30 @@ public class Test1 {
         buf.readBytes(bs);
         System.out.println(new String(bs,"UTF-8"));
 
+    }
 
 
+    @Test
+    public void test123(){
+          ScheduledExecutorService executor1 = Executors
+                .newScheduledThreadPool(1);
+        executor1.scheduleWithFixedDelay(new Runnable() {
+            @Override
+            public void run() {
+                    System.out.println(System.currentTimeMillis()/1000);
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 1000, 1000,TimeUnit.MILLISECONDS);
+
+        try {
+            Thread.sleep(100000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
     }
 }
