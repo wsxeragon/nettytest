@@ -1,15 +1,12 @@
-package com.wsx.test.NettyTest.netty.test3;
+package com.wsx.test.NettyTest.netty.testUdp;
 
 import io.netty.bootstrap.Bootstrap;
-import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.*;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.DatagramPacket;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
 import io.netty.util.CharsetUtil;
 
 public class MyServer {
@@ -37,7 +34,7 @@ public class MyServer {
                         }
                     });
 
-            Channel channel =  bootstrap.bind(2225).sync().channel();
+            Channel channel =  bootstrap.bind(2555).sync().channel();
 
             channel.closeFuture().sync();
         } catch (Exception e) {

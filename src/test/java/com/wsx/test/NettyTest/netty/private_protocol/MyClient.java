@@ -87,6 +87,7 @@ public class MyClient {
                             System.out.println("重连");
                             connect(ip, port);
                         } catch (InterruptedException e) {
+                             e.printStackTrace();
                         }
                     }
                 }
@@ -192,6 +193,12 @@ public class MyClient {
             ctx.writeAndFlush(message);
         }
 
+
+        @Override
+        public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+            //System.out.println("write:"+msg);
+            super.write(ctx, msg, promise);
+        }
 
 
         @Override

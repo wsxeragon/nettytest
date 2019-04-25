@@ -103,4 +103,36 @@ public class Test1 {
         }
 
     }
+
+
+    @Test
+    public void test1q(){
+
+        ByteBuf byteBuf = Unpooled.buffer();
+        byteBuf.writeByte(1);
+        byteBuf.writeByte(2);
+        byte[] bytes =new byte[1];
+        byteBuf.readBytes(bytes);
+    }
+
+    @Test
+    public void test123q(){
+
+        System.out.println(8&8);
+        printNum(8);
+    }
+
+    private static void printNum(int n){
+        String num = Integer.toBinaryString(n);
+        if(num.length() == 32){
+            System.out.println(num);
+        }else{
+            StringBuilder sb = new StringBuilder("");
+            for(int i =0;i < 32 - num.length(); i ++){
+                sb.append("0");
+            }
+            System.out.println(sb.toString() + num);
+        }
+    }
+
 }

@@ -1,4 +1,4 @@
-package com.wsx.test.NettyTest.netty.test3;
+package com.wsx.test.NettyTest.netty.testUdp;
 
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -32,7 +32,8 @@ public class MyClient {
                     });
 
             Channel ch = b.bind(0).sync().channel();
-            ch.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer("哈哈哈哈哈哈哈哈哈", CharsetUtil.UTF_8),new InetSocketAddress("127.0.0.1",2225)));
+            ch.writeAndFlush(new DatagramPacket(Unpooled.copiedBuffer("哈哈哈哈哈哈哈哈哈", CharsetUtil.UTF_8),
+                    new InetSocketAddress("127.0.0.1",2555)));
             ch.closeFuture().sync();
         } catch (Exception e) {
             e.printStackTrace();
