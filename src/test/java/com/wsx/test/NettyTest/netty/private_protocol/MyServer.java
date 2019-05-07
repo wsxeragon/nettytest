@@ -28,7 +28,7 @@ public class MyServer {
             bootstrap.group(bossGroup,workerGroup)
                     .channel(NioServerSocketChannel.class)
                     .option(ChannelOption.SO_BACKLOG,1024)
-                    //handler()是发生在初始化的时候，childHandler()是发生在客户端连接之后。
+                    //handler()是在初始化的时候执行，childHandler()是在客户端成功connect后才执行。
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
