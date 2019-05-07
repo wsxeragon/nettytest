@@ -51,6 +51,7 @@ public class MyClient {
             bootstrap.group(group)
                     .channel(NioSocketChannel.class)
                     .option(ChannelOption.TCP_NODELAY,true)
+                    //handler()是发生在初始化的时候，childHandler()是发生在客户端连接之后。
                     .handler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         protected void initChannel(SocketChannel socketChannel) throws Exception {

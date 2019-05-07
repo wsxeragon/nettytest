@@ -28,6 +28,7 @@ public class NettyMessageEncoder extends MessageToMessageEncoder<NettyMessage> {
         //按顺利编码后，根据定义的字段数据类型写入ByteBuf,解码时也要按顺序挨个取出
         bf.writeInt(msg.getHeader().getCrcCode());
         bf.writeInt(msg.getHeader().getLength());
+
         bf.writeLong(msg.getHeader().getSessionID());
         bf.writeByte(msg.getHeader().getType());
         bf.writeByte(msg.getHeader().getPriority());
